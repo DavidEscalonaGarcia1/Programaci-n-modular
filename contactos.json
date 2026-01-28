@@ -1,0 +1,56 @@
+[
+    {
+        "nom": "Pepito",
+        "tel": "345345345",
+        "direccions": [
+            {
+                "carrer": "Falsa",
+                "numero": "123",
+                "pis": "23",
+                "cp": "33333"
+            },
+            {
+                "carrer": "Falsa",
+                "numero": "234",
+                "pis": "2",
+                "cp": "34567"
+            }
+        ]
+    },
+    {
+        "nom": "Paco",
+        "tel": "9789789",
+        "direccions": [
+            {
+                "carrer": "Falsa",
+                "numero": "456",
+                "pis": "12",
+                "cp": "44444"
+            }
+        ]
+    },
+    {
+        "nom": "Fulano",
+        "tel": "9789789",
+        "direccions": [
+            {
+                "carrer": "Falsa",
+                "numero": "456",
+                "pis": "12",
+                "cp": "44444"
+            }
+        ]
+    },
+    {
+        "nom": "Abel",
+        "tel": "9789789",
+        "direccions": [
+            {
+                "carrer": "Falsa",
+                "numero": "456",
+                "pis": "12",
+                "cp": "44444"
+            }
+        ]
+    }
+]
