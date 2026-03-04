@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Pràctica Python — Cadenes i Regex Bàsiques</title>
+  <style>
+    :root{
+      --bg:#0b1220;
+      --card:#0f1a2e;
+      --text:#eaf0ff;
+      --muted:#b7c3e6;
+      --accent:#7c5cff;
+      --accent2:#2ee59d;
+      --warning:#ffcc66;
+      --danger:#ff6b6b;
+      --border:rgba(255,255,255,.10);
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+      --radius:16px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:var(--sans);
+      color:var(--text);
+      background:
+        radial-gradient(1000px 600px at 10% 10%, rgba(124,92,255,.25), transparent 60%),
+        radial-gradient(900px 500px at 90% 15%, rgba(46,229,157,.18), transparent 55%),
+        radial-gradient(900px 700px at 50% 90%, rgba(255,204,102,.12), transparent 55%),
+        var(--bg);
+      line-height:1.55;
+    }
+    header{
+      padding:44px 20px 22px;
+      max-width:1100px;
+      margin:0 auto;
+    }
+    .badge{
+      display:inline-flex;
+      gap:10px;
+      align-items:center;
+      padding:8px 12px;
+      border:1px solid var(--border);
+      border-radius:999px;
+      background:rgba(255,255,255,.03);
+      color:var(--muted);
+      font-size:14px;
+    }
+    .dot{
+      width:10px;height:10px;border-radius:999px;background:var(--accent2);
+      box-shadow:0 0 0 4px rgba(46,229,157,.15);
+    }
+    h1{
+      margin:14px 0 8px;
+      font-size:clamp(28px, 4vw, 44px);
+      letter-spacing:-.02em;
+    }
+    .subtitle{
+      max-width:900px;
+      color:var(--muted);
+      font-size:16px;
+      margin:0;
+    }
+    .container{
+      max-width:1100px;
+      margin:0 auto;
+      padding:0 20px 60px;
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:18px;
+    }
+    @media (min-width: 980px){
+      .container{ grid-template-columns: 1.4fr .9fr; align-items:start;}
+    }
+    .card{
+      background:rgba(15,26,46,.88);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+    .card .hd{
+      padding:18px 18px 12px;
+      border-bottom:1px solid var(--border);
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+      gap:12px;
+    }
+    .card .bd{ padding:18px; }
+    .kicker{
+      font-size:13px;
+      color:var(--muted);
+      text-transform:uppercase;
+      letter-spacing:.12em;
+    }
+    h2{
+      margin:6px 0 0;
+      font-size:22px;
+      letter-spacing:-.01em;
+    }
+    h3{
+      margin:18px 0 10px;
+      font-size:18px;
+    }
+    ul{ margin:10px 0 0; padding-left:18px;}
+    li{ margin:8px 0;}
+    .pill{
+      display:inline-block;
+      padding:6px 10px;
+      border-radius:999px;
+      background:rgba(124,92,255,.14);
+      border:1px solid rgba(124,92,255,.35);
+      color:#dcd6ff;
+      font-size:13px;
+      white-space:nowrap;
+    }
+    .grid2{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:12px;
+    }
+    @media (min-width: 640px){
+      .grid2{ grid-template-columns: 1fr 1fr; }
+    }
+    .callout{
+      padding:14px 14px;
+      border-radius:14px;
+      border:1px solid var(--border);
+      background:rgba(255,255,255,.03);
+    }
+    .callout strong{ color:var(--text); }
+    .callout.warn{
+      border-color: rgba(255,204,102,.35);
+      background: rgba(255,204,102,.08);
+    }
+    .callout.danger{
+      border-color: rgba(255,107,107,.40);
+      background: rgba(255,107,107,.10);
+    }
+    .muted{ color:var(--muted); }
+
+    pre{
+      margin:0;
+      padding:16px 16px 14px;
+      background:linear-gradient(180deg, rgba(10,15,28,.95), rgba(10,15,28,.85));
+      border:1px solid var(--border);
+      border-radius:14px;
+      overflow:auto;
+      font-family:var(--mono);
+      font-size:13px;
+      line-height:1.5;
+      position:relative;
+    }
+    code{ font-family:var(--mono); }
+    .codewrap{
+      display:grid;
+      gap:10px;
+    }
+    .codebar{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:10px;
+    }
+    .btn{
+      appearance:none;
+      border:1px solid var(--border);
+      background:rgba(255,255,255,.04);
+      color:var(--text);
+      padding:8px 10px;
+      border-radius:12px;
+      cursor:pointer;
+      font-weight:600;
+      font-size:13px;
+      transition:.15s transform ease, .15s background ease, .15s border-color ease;
+    }
+    .btn:hover{
+      transform:translateY(-1px);
+      background:rgba(255,255,255,.07);
+      border-color:rgba(255,255,255,.18);
+    }
+    .btn:active{ transform:translateY(0px) scale(.99); }
+    .btn.primary{
+      border-color: rgba(124,92,255,.45);
+      background: rgba(124,92,255,.18);
+    }
+    .btn.primary:hover{
+      background: rgba(124,92,255,.24);
+      border-color: rgba(124,92,255,.65);
+    }
+
+    .kw{ color:#7cdeff; }
+    .fn{ color:#ffd479; }
+    .st{ color:#8cf6c8; }
+    .cm{ color:#8aa0c7; }
+    .nb{ color:#c7a6ff; }
+    .num{ color:#ff9bd5; }
+
+    footer{
+      max-width:1100px;
+      margin:0 auto;
+      padding:0 20px 40px;
+      color:var(--muted);
+      font-size:13px;
+    }
+    .mini{ font-size:12px; color:var(--muted); }
+    .divider{
+      height:1px;
+      background:var(--border);
+      margin:14px 0;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="badge"><span class="dot"></span> Pràctica guiada · Python · Strings + Regex (bàsic)</div>
+    <h1>Neteja i validació de dades d’un formulari</h1>
+    <p class="subtitle">
+      Treballaràs amb text “brut” i hauràs d’aplicar <strong>tractament de cadenes</strong> i <strong>regex molt bàsiques</strong> (mòdul <code>re</code>)
+      per normalitzar camps i detectar errors.
+    </p>
+  </header>
+
+  <main class="container">
+    <section class="card">
+      <div class="hd">
+        <div>
+          <div class="kicker">Enunciat</div>
+          <h2>Què has de construir</h2>
+        </div>
+        <span class="pill">Temps estimat: 60–90 min</span>
+      </div>
+      <div class="bd">
+        <p class="muted">
+          Tens una llista de línies de text. Cada línia representa un registre amb aquest format aproximat:
+          <code>nom ; email ; telefon ; codi_postal ; comentari</code> (però ve amb espais raros, majúscules, símbols, etc.).
+        </p>
+
+        <h3>1) Normalització (strings)</h3>
+        <div class="grid2">
+          <div class="callout">
+            <strong>Nom</strong>
+            <ul>
+              <li>Eliminar espais extra (múltiples → un).</li>
+              <li>Format “Títol” (capitalitzar cada paraula).</li>
+              <li>Mantenir guions (ex: <code>Maria-José</code>).</li>
+            </ul>
+          </div>
+          <div class="callout">
+            <strong>Email</strong>
+            <ul>
+              <li>Passar a minúscules i fer <code>strip()</code>.</li>
+              <li>Validar format bàsic amb regex.</li>
+            </ul>
+          </div>
+          <div class="callout">
+            <strong>Telèfon (Espanya)</strong>
+            <ul>
+              <li>Normalitzar a <code>+34XXXXXXXXX</code> (9 dígits).</li>
+              <li>Acceptar: <code>612345678</code>, <code>+34 612-34-56-78</code>, <code>0034 611 22 33 44</code>…</li>
+              <li>Si no es pot → invàlid.</li>
+            </ul>
+          </div>
+          <div class="callout">
+            <strong>Codi postal</strong>
+            <ul>
+              <li>Ha de ser exactament 5 dígits: <code>^\d{5}$</code>.</li>
+              <li>(Extra) rebutjar <code>00000</code> o validar rang.</li>
+            </ul>
+          </div>
+        </div>
+
+        <h3>2) Neteja de comentari (regex)</h3>
+        <div class="callout warn">
+          <ul>
+            <li>Treure espais extra al principi/final i entre paraules.</li>
+            <li>Reduir <code>!!!</code> i <code>???</code> a un sol signe amb <code>re.sub</code>:
+              <code>Holaaa!!!</code> → <code>Holaaa!</code>
+            </li>
+            <li>(Opcional) treure caràcters raros finals.</li>
+          </ul>
+        </div>
+
+        <h3>3) Validacions (regex bàsiques)</h3>
+        <p class="muted">
+          Implementa funcions que retornin <code>True/False</code>:
+          <code>email_valid()</code>, <code>cp_valid()</code>, <code>telefon_valid()</code>.
+        </p>
+
+        <div class="divider"></div>
+
+        <h3>Exemples d’entrada</h3>
+        <pre><code class="language-text">"  Ana   López ; ANA.LOPEZ@gmail.com  ; +34  612-34-56-78 ; 08001 ;  Hola!! Vull info  "
+"pepe perez; pepe_perez@correu.es; 612345678;28013;   m'encanta Python!!!   "
+"MARÍA-josé ; maria.jose@correu ; 0034 611 22 33 44 ;  41001 ; Bones, truca'm."
+"Juan; juan@gmail.com ; 123 ; 99999 ; ???"</code></pre>
+
+        <h3>Sortida esperada (format lliure)</h3>
+        <pre><code class="language-text">Registre 1: OK
+Nom: Ana López
+Email: ana.lopez@gmail.com
+Tel: +34612345678
+CP: 08001
+Comentari: Hola! Vull info
+---
+Registre 3: ERRORS -> email, telefon</code></pre>
+      </div>
+    </section>
+
+    <aside class="card">
+      <div class="hd">
+        <div>
+          <div class="kicker">Requisits</div>
+          <h2>Checklist</h2>
+        </div>
+        <span class="pill">Obligatori</span>
+      </div>
+      <div class="bd">
+        <ul>
+          <li>Fer servir <code>strip()</code>, <code>lower()</code>, <code>split()</code> i <code>' '.join(...)</code>.</li>
+          <li>Fer servir <code>re</code> amb almenys <code>re.fullmatch</code> (o <code>re.search</code>) i <code>re.sub</code>.</li>
+          <li>Crear com a mínim <strong>4 funcions</strong> (p.ex. una per camp).</li>
+          <li>Mostrar per pantalla <strong>OK</strong> o llista d’errors per registre.</li>
+        </ul>
+
+        <div class="divider"></div>
+
+        <div class="callout danger">
+          <strong>Pistes regex (molt bàsiques)</strong>
+          <ul>
+            <li>Email simple: <code>^[\w\.-]+@[\w\.-]+\.\w{2,}$</code></li>
+            <li>CP 5 dígits: <code>^\d{5}$</code></li>
+            <li>Tel normalitzat: <code>^\+34\d{9}$</code></li>
+            <li>Reduir signes: <code>r'!{2,}'</code> → <code>!</code> i <code>r'\?{2,}'</code> → <code>?</code></li>
+          </ul>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="codewrap">
+          <div class="codebar">
+            <span class="pill">Plantilla (copia i completa)</span>
+            <button class="btn primary" id="copyBtn">Copia el codi</button>
+          </div>
+
+          <pre id="codeBlock"><code>
+<span class="kw">import</span> re
+
+<span class="kw">def</span> <span class="fn">normalitzar_espais</span>(text: <span class="nb">str</span>) -&gt; <span class="nb">str</span>:
+    <span class="cm"># TODO: convertir múltiples espais en un i retallar</span>
+    <span class="kw">pass</span>
+
+<span class="kw">def</span> <span class="fn">normalitzar_nom</span>(nom: <span class="nb">str</span>) -&gt; <span class="nb">str</span>:
+    <span class="cm"># TODO: espais + format títol, respectant guions</span>
+    <span class="kw">pass</span>
+
+<span class="kw">def</span> <span class="fn">email_valid</span>(email: <span class="nb">str</span>) -&gt; <span class="nb">bool</span>:
+    <span class="cm"># TODO: regex bàsica (p.ex. re.fullmatch(...))</span>
+    <span class="kw">pass</span>
+
+<span class="kw">def</span> <span class="fn">normalitzar_email</span>(email: <span class="nb">str</span>) -&gt; <span class="nb">str</span>:
+    <span class="cm"># TODO: strip + lower</span>
+    <span class="kw">pass</span>
+
+<span class="kw">def</span> <span class="fn">normalitzar_telefon</span>(tel: <span class="nb">str</span>) -&gt; <span class="nb">str</span> | <span class="nb">None</span>:
+    <span class="cm"># TODO:</span>
+    <span class="cm"># 1) quedar-te només amb dígits</span>
+    <span class="cm"># 2) gestionar prefixos 34 i 0034</span>
+    <span class="cm"># 3) si queden 9 dígits -&gt; "+34" + digits, si no -&gt; None</span>
+    <span class="kw">pass</span>
+
+<span class="kw">def</span> <span class="fn">cp_valid</span>(cp: <span class="nb">str</span>) -&gt; <span class="nb">bool</span>:
+    <span class="cm"># TODO: ^\d{5}$</span>
+    <span class="kw">pass</span>
+
+<span class="kw">def</span> <span class="fn">netejar_comentari</span>(com: <span class="nb">str</span>) -&gt; <span class="nb">str</span>:
+    <span class="cm"># TODO: espais + reduir !!! i ??? amb re.sub</span>
+    <span class="kw">pass</span>
+
+<span class="kw">def</span> <span class="fn">processar_linia</span>(linia: <span class="nb">str</span>) -&gt; <span class="nb">dict</span>:
+    <span class="cm"># TODO: separar per ; i aplicar normalitzacions</span>
+    <span class="kw">pass</span>
+
+<span class="kw">def</span> <span class="fn">validar_registre</span>(reg: <span class="nb">dict</span>) -&gt; <span class="nb">list</span>[<span class="nb">str</span>]:
+    <span class="cm"># TODO: retornar llista d'errors</span>
+    <span class="kw">pass</span>
+
+
+linies = [
+    <span class="st">"  Ana   López ; ANA.LOPEZ@gmail.com  ; +34  612-34-56-78 ; 08001 ;  Hola!! Vull info  "</span>,
+    <span class="st">"pepe perez; pepe_perez@correu.es; 612345678;28013;   m'encanta Python!!!   "</span>,
+    <span class="st">"MARÍA-josé ; maria.jose@correu ; 0034 611 22 33 44 ;  41001 ; Bones, truca'm."</span>,
+    <span class="st">"Juan; juan@gmail.com ; 123 ; 99999 ; ???"</span>
+]
+
+<span class="kw">for</span> i, linia <span class="kw">in</span> <span class="nb">enumerate</span>(linies, start=<span class="num">1</span>):
+    reg = processar_linia(linia)
+    errors = validar_registre(reg)
+    <span class="kw">if</span> <span class="kw">not</span> errors:
+        <span class="nb">print</span>(<span class="st">f"Registre {i}: OK"</span>)
+    <span class="kw">else</span>:
+        <span class="nb">print</span>(<span class="st">f"Registre {i}: ERRORS -&gt; {', '.join(errors)}"</span>)
+    <span class="nb">print</span>(reg)
+    <span class="nb">print</span>(<span class="st">"---"</span>)
+</code></pre>
+
+          <p class="mini">
+            Nota: pots fer servir <code>re.fullmatch</code> per validar que tota la cadena encaixa amb el patró.
+          </p>
+        </div>
+
+        <div class="divider"></div>
+
+        <h3>Extra (per pujar nota)</h3>
+        <ul>
+          <li>Comptar quants registres <code>OK</code> vs amb errors.</li>
+          <li>Exportar registres normalitzats a CSV.</li>
+          <li>Admetre apòstrof en noms (<code>O'Connor</code>) o múltiples guions.</li>
+          <li>Comptar dominis d’email més freqüents.</li>
+        </ul>
+      </div>
+    </aside>
+  </main>
+
+  <footer>
+    Fet per practicar: <strong>strings</strong> (<code>strip</code>, <code>split</code>, <code>join</code>, <code>lower</code>)
+    + <strong>regex bàsiques</strong> (<code>re.fullmatch</code>, <code>re.sub</code>).
+    <br/>Si vols, enganxa la teva solució i te la corregeixo amb feedback.
+  </footer>
+
+  <script>
+    const btn = document.getElementById('copyBtn');
+    const pre = document.getElementById('codeBlock');
+
+    function getPlainCode(){
+      return pre.innerText.replace(/\u00A0/g, ' ');
+    }
+
+    btn.addEventListener('click', async () => {
+      const text = getPlainCode();
+      try{
+        await navigator.clipboard.writeText(text);
+        const old = btn.textContent;
+        btn.textContent = "Copiat!";
+        setTimeout(()=> btn.textContent = old, 1200);
+      }catch(e){
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        const old = btn.textContent;
+        btn.textContent = "Copiat!";
+        setTimeout(()=> btn.textContent = old, 1200);
+      }
+    });
+  </script>
+</body>
+</html>
